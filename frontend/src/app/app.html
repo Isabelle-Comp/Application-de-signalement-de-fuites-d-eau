@@ -1,0 +1,38 @@
+<main>
+  <h1>Signalement de fuites d’eau</h1>
+
+  <section class="carte">
+    <h2>Nouveau signalement</h2>
+    <input [(ngModel)]="quartier" placeholder="Quartier" />
+    <textarea [(ngModel)]="description" placeholder="Description de la fuite"></textarea>
+    <input #f type="file" accept="image/jpeg,image/png" (change)="choisir($event)" />
+    @if (erreur) { <p class="erreur">{{ erreur }}</p> }
+    <button (click)="envoyer(f)" [disabled]="!quartier || !description || !fichier">Envoyer</button>
+  </section>
+
+  <section class="carte">
+    <h2>Signalements par quartier</h2>
+    @for (s of stats; track s.quartier) {
+      <p><strong>{{ s.quartier }}</strong> : {{ s.total }}</p>
+    } @empty { <p>Aucun signalement.</p> }
+  </section>
+
+  <section>
+    <h2>Liste des signalements</h2>
+    @for (s of signalements; track s.id) {
+      <article class="carte signalement">
+        <img [src]="photo(s.photo)" alt="Photo de la fuite" />
+        <div>
+          <h3>{{ s.quartier }}</h3>
+          <p>{{ s.description }}</p>
+          <small>{{ s.dateCreation | date:'dd/MM/yyyy HH:mm' }}</small>
+          <select [ngModel]="s.statut" (ngModelChange)="changer(s, $event)">
+            @for (st of statuts; track st.valeur) {
+              <option [value]="st.valeur">{{ st.libelle }}</option>
+            }
+          </select>
+        </div>
+      </article>
+    }
+  </section>
+</main>
